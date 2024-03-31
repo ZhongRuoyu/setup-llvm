@@ -1,0 +1,33 @@
+name: Setup LLVM
+description: >
+  Set up a specific version of LLVM and add the command-line tools to the PATH.
+author: ZhongRuoyu
+inputs:
+  llvm-version:
+    description: Version of LLVM to use
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - if: runner.os == 'Linux'
+      run: '${{ github.action_path }}/linux.sh'
+      env:
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+      shell: sh
+
+    - if: runner.os == 'Windows'
+      run: '${{ github.action_path }}/windows.ps1'
+      env:
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+      shell: pwsh
+
+    - if: runner.os == 'macOS'
+      run: '${{ github.action_path }}/macos.sh'
+      env:
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+      shell: sh
+
+branding:
+  icon: code
+  color: yellow
