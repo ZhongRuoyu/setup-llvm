@@ -7,7 +7,7 @@ command-line tools to the PATH.
 
 ```yaml
 - name: Setup LLVM
-  uses: ZhongRuoyu/setup-llvm@main
+  uses: ZhongRuoyu/setup-llvm@v0
   with:
     llvm-version: 15
 ```
