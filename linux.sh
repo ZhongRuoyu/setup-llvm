@@ -14,7 +14,7 @@ install_llvm() {
   cd "$tmpdir"
   curl -fsSL https://apt.llvm.org/llvm.sh -o llvm.sh
   chmod +x llvm.sh
-  sudo ./llvm.sh "$llvm_version"
+  sudo ./llvm.sh "$llvm_version" all
 }
 
 setup_llvm_path() {
