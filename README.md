@@ -16,7 +16,7 @@ command-line tools to the PATH.
 
 ### Host OS
 
-Currently, this action supports Debian/Ubuntu and macOS runners.
+Currently, this action supports Debian/Ubuntu, macOS, and Windows runners.
 
 ### LLVM
 
@@ -27,6 +27,7 @@ distributors.
 | ------------- | ------------------------------------------------------------ |
 | Debian/Ubuntu | [LLVM Debian/Ubuntu nightly packages](https://apt.llvm.org/) |
 | macOS         | [Homebrew](https://brew.sh/)                                 |
+| Windows       | [Chocolatey](https://chocolatey.org/)                        |
 
 For each major release, the latest version in the series is installed.
 For instance, specifying `llvm-version: 17` installs the latest LLVM 17 (i.e.,

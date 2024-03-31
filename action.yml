@@ -15,17 +15,17 @@ runs:
         LLVM_VERSION: ${{ inputs.llvm-version }}
       shell: sh
 
-    - if: runner.os == 'Windows'
-      run: '${{ github.action_path }}/windows.ps1'
-      env:
-        LLVM_VERSION: ${{ inputs.llvm-version }}
-      shell: pwsh
-
     - if: runner.os == 'macOS'
       run: '${{ github.action_path }}/macos.sh'
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
       shell: sh
+
+    - if: runner.os == 'Windows'
+      run: '${{ github.action_path }}/windows.ps1'
+      env:
+        LLVM_VERSION: ${{ inputs.llvm-version }}
+      shell: pwsh
 
 branding:
   icon: code
