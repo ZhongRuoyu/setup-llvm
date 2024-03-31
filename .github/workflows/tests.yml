@@ -20,6 +20,10 @@ jobs:
           - 16
           - 17
           - 18
+        exclude:
+          # TODO: Remove this when `llvm@18` is available in Homebrew.
+          - os: macos-latest
+            llvm-version: 18
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
