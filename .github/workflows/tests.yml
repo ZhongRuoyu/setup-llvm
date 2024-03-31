@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ubuntu:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+        llvm-version:
+          - 13
+          - 14
+          - 15
+          - 16
+          - 17
+          - 18
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup LLVM
+        uses: ./
+        with:
+          llvm-version: ${{ matrix.llvm-version }}
