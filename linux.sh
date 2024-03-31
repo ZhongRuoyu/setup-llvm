@@ -2,20 +2,31 @@
 
 set -eux
 
+current_llvm_stable() {
+  curl -fsSL https://apt.llvm.org/llvm.sh |
+    sed -En 's/^CURRENT_LLVM_STABLE=([0-9]+)$/\1/p'
+}
+
 install_llvm() {
+  llvm_version="$1"
   tmpdir="$(mktemp -d)"
   trap 'rm -rf -- "$tmpdir"' EXIT
   cd "$tmpdir"
   curl -fsSL https://apt.llvm.org/llvm.sh -o llvm.sh
   chmod +x llvm.sh
-  sudo ./llvm.sh "$@"
+  sudo ./llvm.sh "$llvm_version"
+}
+
+setup_llvm_path() {
+  llvm_version="$1"
+  echo "/usr/lib/llvm-$llvm_version/bin" >>"$GITHUB_PATH"
+  PATH="/usr/lib/llvm-$llvm_version/bin:$PATH"
+  export PATH
 }
 
 sanity_check() {
-  llvm_config="llvm-config${1:+-$1}"
-  llvm_version="$("$llvm_config" --version)"
-  llvm_major_version="$(echo "$llvm_version" | cut -d. -f1)"
-  if [ "$#" -eq 1 ] && [ "$llvm_major_version" != "$1" ]; then
+  llvm_version="$(llvm-config --version)"
+  if [ "$(echo "$llvm_version" | cut -d. -f1)" != "$1" ]; then
     echo "Expected LLVM major version $1, got $llvm_version" >&2
     exit 1
   fi
@@ -26,10 +37,7 @@ if ! apt-get --version >/dev/null; then
   exit 1
 fi
 
-if [ -n "${LLVM_VERSION:-}" ]; then
-  install_llvm "$LLVM_VERSION"
-  sanity_check "$LLVM_VERSION"
-else
-  install_llvm
-  sanity_check
-fi
+LLVM_VERSION="${LLVM_VERSION:-$(current_llvm_stable)}"
+install_llvm "$LLVM_VERSION"
+setup_llvm_path "$LLVM_VERSION"
+sanity_check "$LLVM_VERSION"

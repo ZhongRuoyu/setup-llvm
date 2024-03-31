@@ -5,7 +5,6 @@ author: ZhongRuoyu
 inputs:
   llvm-version:
     description: Version of LLVM to use
-    required: true
 
 runs:
   using: composite
