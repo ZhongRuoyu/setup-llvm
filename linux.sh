@@ -14,7 +14,9 @@ install_llvm() {
   cd "$tmpdir"
   curl -fsSL https://apt.llvm.org/llvm.sh -o llvm.sh
   chmod +x llvm.sh
-  sudo ./llvm.sh "$llvm_version" all
+  # Set DPKG_FORCE to overwrite because the packages may conflict with the
+  # pre-installed ones from the GitHub Actions runner image.
+  sudo env DPKG_FORCE=overwrite ./llvm.sh "$llvm_version" all
 }
 
 setup_llvm_path() {
