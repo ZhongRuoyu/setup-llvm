@@ -9,7 +9,7 @@ command-line tools to the PATH.
 - name: Setup LLVM
   uses: ZhongRuoyu/setup-llvm@v0
   with:
-    llvm-version: 15
+    llvm-version: 17
 ```
 
 ## Support Matrix
