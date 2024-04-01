@@ -5,6 +5,10 @@ author: ZhongRuoyu
 inputs:
   llvm-version:
     description: Version of LLVM to use
+outputs:
+  llvm-path:
+    description: The absolute path to the LLVM installation
+    value: ${{ steps.output.outputs.llvm-path }}
 
 runs:
   using: composite
@@ -26,6 +30,13 @@ runs:
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
       shell: pwsh
+
+    - id: output
+      run: |
+        import os
+        with open(os.getenv("GITHUB_OUTPUT"), "a") as f:
+          print(f"llvm-path={os.getenv('LLVM_PATH')}", file=f)
+      shell: python
 
 branding:
   icon: code
