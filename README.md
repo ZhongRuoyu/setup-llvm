@@ -23,11 +23,11 @@ Currently, this action supports Debian/Ubuntu, macOS, and Windows runners.
 The availability of LLVM major releases is determined by the upstream binary
 distributors.
 
-| OS            | Distributor                                                  |
-| ------------- | ------------------------------------------------------------ |
-| Debian/Ubuntu | [LLVM Debian/Ubuntu nightly packages](https://apt.llvm.org/) |
-| macOS         | [Homebrew](https://brew.sh/)                                 |
-| Windows       | [Chocolatey](https://chocolatey.org/)                        |
+| OS            | Distributor                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| Debian/Ubuntu | [LLVM Debian/Ubuntu nightly packages](https://apt.llvm.org/)                                  |
+| macOS         | [Homebrew](https://brew.sh/)                                                                  |
+| Windows       | [LLVM](https://github.com/llvm/llvm-project/releases) / [Chocolatey](https://chocolatey.org/) |
 
 For each major release, the latest version in the series is installed.
 For instance, specifying `llvm-version: 17` installs the latest LLVM 17 (i.e.,
