@@ -2,6 +2,7 @@
 
 $ErrorActionPreference = "Stop"
 
+$global:LLVM_PATH = ""
 $global:llvm_stable_releases = @()
 
 function Get-LLVMStableReleases {
@@ -73,6 +74,8 @@ function Install-LLVM {
     Get-Content $env:GITHUB_PATH -Raw
   ) | Set-Content $env:GITHUB_PATH
   $env:PATH = "$target\bin;$env:PATH"
+
+  $global:LLVM_PATH = $target
   return $true
 }
 
@@ -93,6 +96,9 @@ function Install-LLVMFromChocolatey {
     --no-progress `
     --yes `
     --version="$version_full"
+  if ($LASTEXITCODE -ne 0) {
+    return $false
+  }
 
   $target = "$env:PROGRAMFILES\LLVM"
   $(
@@ -100,7 +106,9 @@ function Install-LLVMFromChocolatey {
     Get-Content $env:GITHUB_PATH -Raw
   ) | Set-Content $env:GITHUB_PATH
   $env:PATH = "$target\bin;$env:PATH"
-  return $LASTEXITCODE -eq 0
+
+  $global:LLVM_PATH = $target
+  return $true
 }
 
 function Test-Sanity {
@@ -136,3 +144,6 @@ while ($true) {
   exit 1
 }
 Test-Sanity -version $LLVM_VERSION
+
+Write-Output "LLVM $LLVM_VERSION has been installed to $global:LLVM_PATH"
+Write-Output "LLVM_PATH=$global:LLVM_PATH" | Set-Content "$env:GITHUB_ENV"
