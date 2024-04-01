@@ -16,7 +16,11 @@ install_llvm() {
 
 setup_llvm_path() {
   llvm_formula="llvm@$1"
-  echo "$(brew --prefix "$llvm_formula")/bin" >>"$GITHUB_PATH"
+  tmpfile="$(mktemp)"
+  echo "$(brew --prefix "$llvm_formula")/bin" >>"$tmpfile"
+  cat "$GITHUB_PATH" >>"$tmpfile"
+  cat "$tmpfile" >"$GITHUB_PATH"
+  rm -f -- "$tmpfile"
   PATH="$(brew --prefix "$llvm_formula")/bin:$PATH"
   export PATH
 }

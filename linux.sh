@@ -21,7 +21,11 @@ install_llvm() {
 
 setup_llvm_path() {
   llvm_version="$1"
-  echo "/usr/lib/llvm-$llvm_version/bin" >>"$GITHUB_PATH"
+  tmpfile="$(mktemp)"
+  echo "/usr/lib/llvm-$llvm_version/bin" >>"$tmpfile"
+  cat "$GITHUB_PATH" >>"$tmpfile"
+  cat "$tmpfile" >"$GITHUB_PATH"
+  rm -f -- "$tmpfile"
   PATH="/usr/lib/llvm-$llvm_version/bin:$PATH"
   export PATH
 }
