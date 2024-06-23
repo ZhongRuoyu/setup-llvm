@@ -5,12 +5,24 @@ $ErrorActionPreference = "Stop"
 $global:LLVM_PATH = ""
 $global:llvm_stable_releases = @()
 
+function Get-FromGitHubAPI {
+  param(
+    [string]$endpoint
+  )
+
+  $headers = @{}
+  if (Test-Path env:SETUP_LLVM_GITHUB_TOKEN) {
+    $headers["Authorization"] = "Bearer $env:SETUP_LLVM_GITHUB_TOKEN"
+  }
+  return Invoke-RestMethod "https://api.github.com/$endpoint" -Headers $headers
+}
+
 function Get-LLVMStableReleases {
   if ($global:llvm_stable_releases.Count -eq 0) {
     $tags = @()
     for ($page = 1; $true; ++$page) {
       $tags_on_page = (
-        Invoke-RestMethod "https://api.github.com/repos/llvm/llvm-project/releases?page=$page&per_page=100"
+        Get-FromGitHubAPI "repos/llvm/llvm-project/releases?page=$page&per_page=100"
       ).tag_name
       if ($tags_on_page.Count -eq 0) {
         break

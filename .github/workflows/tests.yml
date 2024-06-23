@@ -36,3 +36,4 @@ jobs:
         uses: ./
         with:
           llvm-version: ${{ matrix.llvm-version }}
+          github-token: ${{ github.token }}
