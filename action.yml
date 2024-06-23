@@ -5,6 +5,9 @@ author: ZhongRuoyu
 inputs:
   llvm-version:
     description: Version of LLVM to use
+  github-token:
+    description: Token to authenticate GitHub API requests
+    default: ${{ github.token }}
 outputs:
   llvm-path:
     description: The absolute path to the LLVM installation
@@ -17,18 +20,21 @@ runs:
       run: '${{ github.action_path }}/linux.sh'
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
+        SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
     - if: runner.os == 'macOS'
       run: '${{ github.action_path }}/macos.sh'
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
+        SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
     - if: runner.os == 'Windows'
       run: '${{ github.action_path }}/windows.ps1'
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
+        SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: pwsh
 
     - id: output
