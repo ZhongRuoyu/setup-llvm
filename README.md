@@ -9,7 +9,7 @@ command-line tools to the PATH.
 - name: Setup LLVM
   uses: ZhongRuoyu/setup-llvm@v0
   with:
-    llvm-version: 17
+    llvm-version: 22
 ```
 
 ## Support Matrix
@@ -30,8 +30,7 @@ distributors.
 | Windows       | [LLVM](https://github.com/llvm/llvm-project/releases) / [Chocolatey](https://chocolatey.org/) |
 
 For each major release, the latest version in the series is installed.
-For instance, specifying `llvm-version: 17` installs the latest LLVM 17 (i.e.,
-17.0.6).
+For instance, specifying `llvm-version: 22` installs the latest LLVM 22.
 
 Support for the latest 5 major releases are tested regularly.
 
@@ -40,4 +39,4 @@ Support for the latest 5 major releases are tested regularly.
 This action does not support installing a specific minor/patch version of LLVM.
 If you need that, or if your desired major release is not available, check out
 [llvm-ports](https://github.com/ZhongRuoyu/llvm-ports), which provides Docker
-images like `18.1.0-bookworm` and `11.1.0-bionic`.
+images like `22.1.4-trixie` and `21-resolute`.
