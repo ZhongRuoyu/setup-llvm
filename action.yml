@@ -17,21 +17,24 @@ runs:
   using: composite
   steps:
     - if: runner.os == 'Linux'
-      run: '${{ github.action_path }}/linux.sh'
+      run: |
+        "$GITHUB_ACTION_PATH"/linux.sh
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
     - if: runner.os == 'macOS'
-      run: '${{ github.action_path }}/macos.sh'
+      run: |
+        "$GITHUB_ACTION_PATH"/macos.sh
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
     - if: runner.os == 'Windows'
-      run: '${{ github.action_path }}/windows.ps1'
+      run: |
+        "$env:GITHUB_ACTION_PATH/windows.ps1"
       env:
         LLVM_VERSION: ${{ inputs.llvm-version }}
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}

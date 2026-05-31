@@ -14,6 +14,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
 jobs:
   tests:
     strategy:
@@ -31,6 +37,7 @@ jobs:
           - 22
           - ""
       fail-fast: false
+    name: Tests (${{ matrix.os }} - LLVM ${{ matrix.llvm-version || 'default' }})
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
