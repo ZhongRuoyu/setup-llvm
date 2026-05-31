@@ -16,7 +16,8 @@ outputs:
 runs:
   using: composite
   steps:
-    - if: runner.os == 'Linux'
+    - name: Setup LLVM on Linux
+      if: runner.os == 'Linux'
       run: |
         "$GITHUB_ACTION_PATH"/linux.sh
       env:
@@ -24,7 +25,8 @@ runs:
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
-    - if: runner.os == 'macOS'
+    - name: Setup LLVM on macOS
+      if: runner.os == 'macOS'
       run: |
         "$GITHUB_ACTION_PATH"/macos.sh
       env:
@@ -32,7 +34,8 @@ runs:
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: sh
 
-    - if: runner.os == 'Windows'
+    - name: Setup LLVM on Windows
+      if: runner.os == 'Windows'
       run: |
         "$env:GITHUB_ACTION_PATH/windows.ps1"
       env:
@@ -40,7 +43,8 @@ runs:
         SETUP_LLVM_GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: pwsh
 
-    - id: output
+    - name: Set output
+      id: output
       run: |
         import os
         with open(os.getenv("GITHUB_OUTPUT"), "a") as f:
