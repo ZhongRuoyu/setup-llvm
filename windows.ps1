@@ -19,6 +19,7 @@ function Get-FromGitHubAPI {
 
 function Get-LLVMStableReleases {
   if ($global:llvm_stable_releases.Count -eq 0) {
+    Write-Host "Fetching LLVM release list from GitHub..."
     $tags = @()
     for ($page = 1; $true; ++$page) {
       $tags_on_page = (
@@ -33,6 +34,7 @@ function Get-LLVMStableReleases {
     Select-String -Pattern "^llvmorg-(\d+(\.\d+)*)$" |
     ForEach-Object { $_.Matches.Groups[1].Value } |
     Sort-Object -Descending { [version] $_ }
+    Write-Host "Found $($global:llvm_stable_releases.Count) LLVM stable releases."
   }
   return $global:llvm_stable_releases
 }
@@ -46,21 +48,29 @@ function Install-LLVM {
     [string]$version
   )
 
+  Write-Host "Trying LLVM $version from GitHub release archives..."
   $version_full = Get-LLVMStableReleases |
   Where-Object { $_.StartsWith("$version.") } |
   Select-Object -First 1
+  if (!$version_full) {
+    Write-Warning "GitHub release for LLVM $version was not found."
+    return $false
+  }
 
   $target = "$env:LOCALAPPDATA\Programs\llvm-$version_full"
-  New-Item -ItemType Directory -Force -Path $target
+  Write-Host "Installing LLVM $version_full to $target"
+  New-Item -ItemType Directory -Force -Path $target | Out-Null
   Set-Location $target
 
   $archive_basename = "clang+llvm-$version_full-x86_64-pc-windows-msvc"
   $archive_tar = "$archive_basename.tar"
   $archive = "$archive_tar.xz"
   try {
+    Write-Host "Downloading $archive from GitHub release..."
     Invoke-WebRequest "https://github.com/llvm/llvm-project/releases/download/llvmorg-$version_full/$archive" -OutFile $archive
   }
   catch {
+    Write-Warning "Failed to download LLVM $version_full from GitHub release."
     return $false
   }
 
@@ -68,13 +78,17 @@ function Install-LLVM {
   # archive in two steps instead.
   # https://github.com/libarchive/libarchive/issues/1419
 
+  Write-Host "Decompressing $archive"
   unxz $archive
   if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Failed to decompress $archive"
     return $false
   }
 
+  Write-Host "Extracting $archive_tar"
   tar -xf $archive_tar
   if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Failed to extract $archive_tar"
     return $false
   }
 
@@ -88,6 +102,7 @@ function Install-LLVM {
   $env:PATH = "$target\bin;$env:PATH"
 
   $global:LLVM_PATH = $target
+  Write-Host "Added $target\bin to PATH."
   return $true
 }
 
@@ -96,19 +111,26 @@ function Install-LLVMFromChocolatey {
     [string]$version
   )
 
+  Write-Host "Trying LLVM $version from Chocolatey..."
   $incremented_version = [int]$version + 1
   $version_full = (
     Invoke-RestMethod "https://community.chocolatey.org/api/v2/Packages()?`$filter=(Id eq 'llvm') and (IsPrerelease eq false) and (Version ge '$version') and (Version lt '$incremented_version')"
   ).properties.Version |
   Sort-Object -Descending { [version] $_ } |
   Select-Object -First 1
+  if (!$version_full) {
+    Write-Warning "No LLVM $version package was found on Chocolatey."
+    return $false
+  }
 
+  Write-Host "Installing Chocolatey package llvm $version_full"
   choco install llvm `
     --allow-downgrade `
     --no-progress `
     --yes `
     --version="$version_full"
   if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Chocolatey failed to install LLVM $version_full"
     return $false
   }
 
@@ -120,6 +142,7 @@ function Install-LLVMFromChocolatey {
   $env:PATH = "$target\bin;$env:PATH"
 
   $global:LLVM_PATH = $target
+  Write-Host "Added $target\bin to PATH."
   return $true
 }
 
@@ -128,6 +151,7 @@ function Test-Sanity {
     [string]$version
   )
 
+  Write-Host "Verifying clang resolves to LLVM major version $version"
   $version_full = (
     clang --version |
     Select-Object -First 1 |
@@ -141,15 +165,19 @@ function Test-Sanity {
 
 $LLVM_VERSION = $env:LLVM_VERSION
 if (!$LLVM_VERSION) {
+  Write-Host "No LLVM version requested; using the current stable release."
   $LLVM_VERSION = Get-CurrentLLVMStableRelease
 }
+Write-Host "Installing LLVM version: $LLVM_VERSION"
 while ($true) {
-  Install-LLVM -version $LLVM_VERSION
-  if ($LASTEXITCODE -eq 0) {
+  $installed = Install-LLVM -version $LLVM_VERSION
+  if ($installed) {
+    Write-Host "Installed LLVM $LLVM_VERSION from GitHub release archive."
     break
   }
-  Install-LLVMFromChocolatey -version $LLVM_VERSION
-  if ($LASTEXITCODE -eq 0) {
+  $installed = Install-LLVMFromChocolatey -version $LLVM_VERSION
+  if ($installed) {
+    Write-Host "Installed LLVM $LLVM_VERSION from Chocolatey."
     break
   }
   Write-Error "Failed to install LLVM $LLVM_VERSION"
