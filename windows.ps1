@@ -57,12 +57,18 @@ function Install-LLVM {
     return $false
   }
 
+  $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
+    "aarch64"
+  } else {
+    "x86_64"
+  }
+
   $target = "$env:LOCALAPPDATA\Programs\llvm-$version_full"
   Write-Host "Installing LLVM $version_full to $target"
   New-Item -ItemType Directory -Force -Path $target | Out-Null
   Set-Location $target
 
-  $archive_basename = "clang+llvm-$version_full-x86_64-pc-windows-msvc"
+  $archive_basename = "clang+llvm-$version_full-$arch-pc-windows-msvc"
   $archive_tar = "$archive_basename.tar"
   $archive = "$archive_tar.xz"
   try {
