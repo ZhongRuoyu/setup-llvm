@@ -26,8 +26,10 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          - ubuntu-26.04-arm
           - macos-latest
           - windows-latest
+          - windows-11-arm
         llvm-version:
           - 17
           - 18
@@ -36,6 +38,16 @@ jobs:
           - 21
           - 22
           - ""
+        # Earlier versions of LLVM do not have official ARM64 Linux builds.
+        exclude:
+          - os: ubuntu-26.04-arm
+            llvm-version: 17
+          - os: ubuntu-26.04-arm
+            llvm-version: 18
+          - os: ubuntu-26.04-arm
+            llvm-version: 19
+          - os: ubuntu-26.04-arm
+            llvm-version: 20
       fail-fast: false
     name: Tests (${{ matrix.os }} - LLVM ${{ matrix.llvm-version || 'default' }})
     runs-on: ${{ matrix.os }}
