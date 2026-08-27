@@ -57,3 +57,7 @@ jobs:
         with:
           llvm-version: ${{ matrix.llvm-version }}
           github-token: ${{ github.token }}
+
+      - name: Run Clang
+        run: |
+          clang --version
