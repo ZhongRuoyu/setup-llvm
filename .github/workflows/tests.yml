@@ -31,17 +31,14 @@ jobs:
           - windows-latest
           - windows-11-arm
         llvm-version:
-          - 17
-          - 18
           - 19
           - 20
           - 21
           - 22
+          - 23
           - ""
         # Earlier versions of LLVM do not have official ARM64 Linux builds.
         exclude:
-          - os: ubuntu-26.04-arm
-            llvm-version: 17
           - os: ubuntu-26.04-arm
             llvm-version: 18
           - os: ubuntu-26.04-arm
